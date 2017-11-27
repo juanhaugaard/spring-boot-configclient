@@ -1,0 +1,22 @@
+target/
+generated/
+*.log
+*.bak
+*~
+
+### eclipse ### 
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+**/nb-configuration.xml
