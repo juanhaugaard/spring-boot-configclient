@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
 package com.example;
 
 import com.example.bookmarks.Account;
@@ -24,11 +28,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.LocalDate;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
@@ -199,7 +199,7 @@ public class Application {
     }
 
     @Bean
-    public Docket petApi() {
+    public Docket swaggerApi() {
         String basePackage = this.getClass().getPackage().getName();
         log.info("Configuring Swagger to scan from: {}", basePackage);
         return new Docket(DocumentationType.SWAGGER_2)
