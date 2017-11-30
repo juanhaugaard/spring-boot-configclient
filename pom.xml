@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.8.RELEASE</version>
+        <version>1.5.9.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -25,10 +25,12 @@
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
         <!-- External Dependencies (third-party libraries) -->
-        <spring-cloud.version>Dalston.SR4</spring-cloud.version>
+        <spring-cloud.version>Edgware.RELEASE</spring-cloud.version>
         <docker.plugin.version>0.4.13</docker.plugin.version>
         <release.plugin.version>2.5.3</release.plugin.version>
         <scm.plugin.version>1.9.5</scm.plugin.version>
+        <springfox.version>2.7.0</springfox.version>
+        <spring-boot-admin.version>1.5.5</spring-boot-admin.version>
         <apache.avro.version>1.8.1</apache.avro.version>
         <maven.compiler.plugin.version>3.6.1</maven.compiler.plugin.version>
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
@@ -76,17 +78,17 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>1.5.5</version>
+            <version>${spring-boot-admin.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.7.0</version>
+            <version>${springfox.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
+            <version>${springfox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
