@@ -23,8 +23,9 @@ import java.sql.Timestamp;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SubjectImportBean extends CsvImportBean {
-    public static final String COL1="identifier";
-    public static final String COL2="type";
+    public static final String COL1 = "identifier";
+    public static final String COL2 = "type";
+
     /**
      * SubjectImportBean Constructor
      */
@@ -43,9 +44,9 @@ public class SubjectImportBean extends CsvImportBean {
                 String description = "Failed on # " + record.rowNumber();
                 itemResult.setStatus(CsvItemResult.STATUS.CLIENT_ERROR);
                 if (!record.valueExists(COL1))
-                    description += ", missing "+COL1;
+                    description += ", missing " + COL1;
                 if (!record.valueExists(COL2))
-                    description += ", missing "+COL2;
+                    description += ", missing " + COL2;
                 itemResult.setDescription(description);
             } else {
                 Subject user = new Subject(record.getValue(COL1), record.getValue(COL2));

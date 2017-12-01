@@ -33,12 +33,6 @@ public class CsvResult {
         return errorCount;
     }
 
-    public void setItems(Collection<CsvItemResult> items) {
-        init();
-        this.items.addAll(items);
-        errorCount = (int) this.items.stream().filter(item -> item.isError()).count();
-    }
-
     public void addItem(CsvItemResult item) {
         this.items.add(item);
         if (item.isError())
@@ -47,6 +41,12 @@ public class CsvResult {
 
     public Collection<CsvItemResult> getItems() {
         return Collections.unmodifiableCollection(items);
+    }
+
+    public void setItems(Collection<CsvItemResult> items) {
+        init();
+        this.items.addAll(items);
+        errorCount = (int) this.items.stream().filter(item -> item.isError()).count();
     }
 
     @Override

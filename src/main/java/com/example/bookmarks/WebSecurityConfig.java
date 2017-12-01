@@ -26,10 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                    .antMatchers("/secure/**").authenticated()
-                    .anyRequest().permitAll()
+                .antMatchers("/secure/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
-                    .formLogin()
+                .formLogin()
                 .and()
-                    .httpBasic();
-    }}
+                .httpBasic();
+    }
+}

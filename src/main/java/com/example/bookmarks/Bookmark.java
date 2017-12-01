@@ -10,25 +10,22 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Bookmark {
 
+    public String uri;
+    public String description;
     @JsonIgnore
     @ManyToOne
     private Account account;
-
     @Id
     @GeneratedValue
     private Long id;
 
     Bookmark() { // jpa only
     }
-
     public Bookmark(Account account, String uri, String description) {
         this.uri = uri;
         this.description = description;
         this.account = account;
     }
-
-    public String uri;
-    public String description;
 
     public Account getAccount() {
         return account;
@@ -42,12 +39,12 @@ public class Bookmark {
         return uri;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {

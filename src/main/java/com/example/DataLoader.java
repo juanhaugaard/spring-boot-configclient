@@ -38,7 +38,7 @@ public class DataLoader implements ApplicationRunner {
      * @throws Exception on error
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         if (!args.containsOption(PARAM)) {
             return;
         }
@@ -80,8 +80,8 @@ public class DataLoader implements ApplicationRunner {
         if (bean != null) {
             CsvResult result = bean.readInputStream(new FileInputStream(csvFile));
             log.debug("Result of reading {}: total {}, errors {}", name, result.getTotalCount(), result.getErrorCount());
-            for (CsvItemResult itemResult : result.getItems()){
-                log.debug("\t{}\t{}",itemResult.getStatus(),itemResult.getDescription());
+            for (CsvItemResult itemResult : result.getItems()) {
+                log.debug("\t{}\t{}", itemResult.getStatus(), itemResult.getDescription());
             }
         }
     }

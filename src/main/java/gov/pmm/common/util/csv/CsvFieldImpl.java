@@ -38,7 +38,7 @@ class CsvFieldImpl implements CsvField {
 
     @Override
     public boolean valueExists() {
-        return (value != null) && (value.length()>0);
+        return (value != null) && (value.length() > 0);
     }
 
     @Override
