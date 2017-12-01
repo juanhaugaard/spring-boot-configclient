@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package com.example.subjects;
+package com.example.entities;
 
 import lombok.Data;
 
@@ -14,11 +14,11 @@ public class Subject {
     public Subject() {
     }
 
-    public Subject(String identifier) {
+    public Subject(final String identifier) {
         this.identifier = identifier;
     }
 
-    public Subject(String identifier, String type) {
+    public Subject(final String identifier, final String type) {
         this.identifier = identifier;
         this.type = type;
     }

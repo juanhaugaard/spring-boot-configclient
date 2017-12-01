@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package com.example.subjects;
+package com.example.entities;
 
 import gov.pmm.common.util.csv.CsvImportBean;
 import gov.pmm.common.util.csv.CsvItemResult;
@@ -34,7 +34,7 @@ public class SubjectImportBean extends CsvImportBean {
         log.debug("{} constructed", getClass().getSimpleName());
     }
 
-    protected CsvItemResult processOneRecord(CsvRow record) {
+    protected CsvItemResult processOneRecord(final CsvRow record) {
         Timestamp s = new Timestamp(System.currentTimeMillis());
         CsvItemResult itemResult = new CsvItemResult();
 
@@ -43,10 +43,12 @@ public class SubjectImportBean extends CsvImportBean {
             if (!record.valueExists(COL1) || !record.valueExists(COL2)) {
                 String description = "Failed on # " + record.rowNumber();
                 itemResult.setStatus(CsvItemResult.STATUS.CLIENT_ERROR);
-                if (!record.valueExists(COL1))
+                if (!record.valueExists(COL1)) {
                     description += ", missing " + COL1;
-                if (!record.valueExists(COL2))
+                }
+                if (!record.valueExists(COL2)) {
                     description += ", missing " + COL2;
+                }
                 itemResult.setDescription(description);
             } else {
                 Subject user = new Subject(record.getValue(COL1), record.getValue(COL2));
@@ -68,7 +70,7 @@ public class SubjectImportBean extends CsvImportBean {
         return itemResult;
     }
 
-    private boolean restCallToAuthorization(Subject user) {
+    private boolean restCallToAuthorization(final Subject user) {
         // here we should use a RestTemplate to call Authorization for this user
         return true;
     }

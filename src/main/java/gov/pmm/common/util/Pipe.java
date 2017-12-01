@@ -4,7 +4,11 @@
 
 package gov.pmm.common.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 /**
  * A class that creates a pipe by wrapping an InputStream connected to an OutputStream

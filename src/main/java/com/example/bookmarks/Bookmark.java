@@ -21,6 +21,7 @@ public class Bookmark {
 
     Bookmark() { // jpa only
     }
+
     public Bookmark(Account account, String uri, String description) {
         this.uri = uri;
         this.description = description;
