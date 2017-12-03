@@ -1,14 +1,6 @@
-package com.example;
+package gov.pmm;
 
-import com.example.entities.ActionImportBean;
-import com.example.entities.AssignmentImportBean;
-import com.example.entities.DelegationImportBean;
-import com.example.entities.ObjectImportBean;
-import com.example.entities.PrivilegeImportBean;
-import com.example.entities.RoleImportBean;
-import com.example.entities.ScopeGroupImportBean;
-import com.example.entities.ScopeTypeImportBean;
-import com.example.entities.SubjectImportBean;
+import gov.pmm.authorization.*;
 import gov.pmm.common.util.csv.CsvImportBean;
 import gov.pmm.common.util.csv.CsvItemResult;
 import gov.pmm.common.util.csv.CsvResult;
@@ -64,7 +56,7 @@ public class DataLoader implements ApplicationRunner {
         }
     }
 
-    private void processCsvDir(final String csvDir) throws IOException {
+    private void processCsvDir(final String csvDir) {
         if (StringUtils.isEmpty(csvDir)) {
             throw new IllegalArgumentException("Can not process empty CSV directory name");
         }
@@ -104,7 +96,7 @@ public class DataLoader implements ApplicationRunner {
         } else if (name.toLowerCase().startsWith("roles")) {
             bean = context.getBean(RoleImportBean.class);
         } else if (name.toLowerCase().startsWith("assignments")) {
-            bean = context.getBean(AssignmentImportBean.class);
+            bean = context.getBean(LocalAssignmentImportBean.class);
         } else if (name.toLowerCase().startsWith("delegations")) {
             bean = context.getBean(DelegationImportBean.class);
         }

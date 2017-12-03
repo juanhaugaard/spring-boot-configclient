@@ -12,12 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by juan.haugaard on 1/23/2017.
@@ -222,7 +217,7 @@ public class CsvParser implements Iterable<CsvRow> {
                         curVal.append('"');
                     }
                 } else if (ch == ',') {
-                    store.add(curVal.toString());
+                    store.add(curVal.toString().trim());
                     curVal = new StringBuffer();
                     started = false;
                 } else if (ch == '\r') {
@@ -236,7 +231,7 @@ public class CsvParser implements Iterable<CsvRow> {
             }
             ch = r.read();
         }
-        store.add(curVal.toString());
+        store.add(curVal.toString().trim());
         lineNumber += 1;
         log.trace("{}.parseLine returning, line: {}", this.getClass().getSimpleName(), lineNumber);
         return store;

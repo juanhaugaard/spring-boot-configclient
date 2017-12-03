@@ -1,11 +1,11 @@
-identifier,type
-Eric Yoo, User
-,Missing identifier
-Raghuveer Rao, User
-"User's name is a mess, so what?", User
-Fredrik Lidstrom, User
+identifier                       ,type
+Eric Yoo                         ,User
+                                 ,Missing identifier
+Raghuveer Rao                    ,User
+"User's name is a mess, so what?",User
+Fredrik Lidstrom                 ,User
 Missing type field
-Jamie Bolgiano, User
+Jamie Bolgiano                   ,User
 JOlano1                          ,User
 TReader                          ,User
 JSanchez10                       ,User
