@@ -1,0 +1,185 @@
+[
+  {
+    "id": 17592186046056,
+    "name": "Manage Action",
+    "object": "Action",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046058,
+    "name": "Manage Object",
+    "object": "Object",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046060,
+    "name": "Manage Subject",
+    "object": "Subject",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186047661,
+    "name": "Test Privilege",
+    "system": "PMM",
+    "object": "Announcement",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046062,
+    "name": "Manage Privilege",
+    "object": "Privilege",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046064,
+    "name": "Manage Role",
+    "object": "Role",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186045746,
+    "name": "privilegewo system",
+    "object": "Award",
+    "action": "Edit"
+  },
+  {
+    "id": 17592186046066,
+    "name": "Manage Scope",
+    "object": "Scope",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186045748,
+    "name": "Privilege with system",
+    "system": "PMM",
+    "object": "Award",
+    "action": "Edit"
+  },
+  {
+    "id": 17592186046068,
+    "name": "Manage Scope Type",
+    "object": "Scope Type",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046070,
+    "name": "Manage Scope Group",
+    "object": "Scope Group",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186046072,
+    "name": "Manage Assignment",
+    "object": "Assignment",
+    "action": "Manage"
+  },
+  {
+    "id": 17592186045691,
+    "name": "Revise Announcement",
+    "object": "Announcement",
+    "action": "Revise"
+  },
+  {
+    "id": 17592186045693,
+    "name": "Revise Award",
+    "object": "Award",
+    "action": "Revise"
+  },
+  {
+    "id": 17592186045695,
+    "name": "Edit Announcement",
+    "object": "Announcement",
+    "action": "Edit"
+  },
+  {
+    "id": 17592186045697,
+    "name": "Edit Award",
+    "object": "Award",
+    "action": "Edit"
+  },
+  {
+    "id": 17592186045699,
+    "name": "View Announcement",
+    "object": "Announcement",
+    "action": "View"
+  },
+  {
+    "id": 17592186045701,
+    "name": "View Award",
+    "object": "Award",
+    "action": "View"
+  },
+  {
+    "id": 17592186045703,
+    "name": "Delete Announcement",
+    "object": "Announcement",
+    "action": "Delete"
+  },
+  {
+    "id": 17592186045705,
+    "name": "Delete Award",
+    "object": "Award",
+    "action": "Delete"
+  },
+  {
+    "id": 17592186045707,
+    "name": "Submit Announcement",
+    "object": "Announcement",
+    "action": "Submit"
+  },
+  {
+    "id": 17592186045709,
+    "name": "Submit Award",
+    "object": "Award",
+    "action": "Submit"
+  },
+  {
+    "id": 17592186045711,
+    "name": "Create Announcement",
+    "object": "Announcement",
+    "action": "Create"
+  },
+  {
+    "id": 17592186045713,
+    "name": "Create Award",
+    "object": "Award",
+    "action": "Create"
+  },
+  {
+    "id": 17592186045715,
+    "name": "Approve Announcement",
+    "object": "Announcement",
+    "action": "Approve"
+  },
+  {
+    "id": 17592186045717,
+    "name": "Approve Award",
+    "object": "Award",
+    "action": "Approve"
+  },
+  {
+    "id": 17592186045719,
+    "name": "Certify Announcement",
+    "object": "Announcement",
+    "action": "Certify"
+  },
+  {
+    "id": 17592186045911,
+    "name": "delegate privilege",
+    "system": "PMM",
+    "object": "Award",
+    "action": "View"
+  },
+  {
+    "id": 17592186045721,
+    "name": "Certify Award",
+    "object": "Award",
+    "action": "Certify"
+  },
+  {
+    "id": 17592186046111,
+    "name": "Manage Root Assignment",
+    "object": "Root Assignment",
+    "action": "Manage"
+  }
+]

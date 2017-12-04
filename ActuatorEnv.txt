@@ -136,3 +136,4 @@ systemEnvironment.HOME='/home/juan.haugaard'
 systemEnvironment.GNOME_KEYRING_PID='1803'
 springCloudClientHostInfo.spring.cloud.client.hostname='localhost'
 springCloudClientHostInfo.spring.cloud.client.ipAddress='10.1.8.52'
+$.?(@.object=='Award')

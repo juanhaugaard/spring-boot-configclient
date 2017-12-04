@@ -1,4 +1,4 @@
-package com.example.authorization;
+package gov.pmm.authorization;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import static org.slf4j.event.Level.WARN;
 
 @Slf4j
-public class AuthorizationSubjectTest {
+public class SubjectTest {
 
     private static DocumentContext documentContext;
     private static JSONArray identifiers;
@@ -132,6 +132,8 @@ public class AuthorizationSubjectTest {
             csvResult = importer.readInputStream(fis);
             log.info("Result total:{} errors:{}", csvResult.getTotalCount(), csvResult.getErrorCount());
             csvResult.getItems().stream().forEach(it -> log.info("{} {}", it.getStatus(), it.getDescription()));
+            assertEquals("wrong total count", 19, csvResult.getTotalCount());
+            assertEquals("wrong error count", 3, csvResult.getErrorCount());
         } catch (IOException e) {
             log.error(e.getMessage());
             csvResult = null;

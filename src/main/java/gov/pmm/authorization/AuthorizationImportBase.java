@@ -110,6 +110,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
 
         default boolean performSkip(final List<String> items) {
             // do nothing
+            log.trace("{}.performSkip({})", getClass().getSimpleName(), String.join(",", items));
             return true;
         }
     }

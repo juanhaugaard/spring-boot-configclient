@@ -4,74 +4,65 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SubjectProcessor extends AuthorizationProcessorBase {
+public class ObjectProcessor extends AuthorizationProcessorBase {
 
+    private RestTemplate rest;
+    private URI uri;
+    private String token;
     private DocumentContext documentContext;
-    private JSONArray identifiers;
+    private JSONArray objects;
 
-    @Autowired
-    public SubjectProcessor(
+    public ObjectProcessor(
             @Value("${authorization.host}") String host,
-            @Value("${subjects.path:/api/subjects}") String path,
+            @Value("${objects.path:/api/objects}") String path,
             @Value("${authorization.token}") String token) throws URISyntaxException {
-        super(host,path,token);
+        super(host, path, token);
         log.debug("Constructing {} with url={}{}", getClass().getSimpleName(), host, path);
+        this.rest = new RestTemplate();
+        this.token = token;
+        setURI(host + path);
     }
 
     @Override
     public AuthorizationImportBase.ACTION selectAction(List<String> items) {
-        if ((items == null) || (items.size() != 2))
+        if ((items == null) || (items.size() != 1))
             throw new IllegalArgumentException("invalid items parameter");
-        final String subjectId = items.get(0);
-        final String subjectType = items.get(1);
+        final String objectId = items.get(0);
         final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
-        log.trace("selectAction: subject={}, {}", subjectId, subjectType);
-        if (getIdentifiers().contains(subjectId)) {
-            String filter = String.format("$[?(@.identifier=='%s')]", subjectId);
-            JSONArray result = getDocumentContext().read(filter);
-            result.stream()
-                    .map(o -> (Map<String, String>) o)
-                    .filter(map -> subjectId.equals(map.get("identifier")))
-                    .forEach(map -> {
-                        if (subjectType.equals(map.get("type"))) {
-                            ret[0] = AuthorizationImportBase.ACTION.SKIP;
-                        } else {
-                            ret[0] = AuthorizationImportBase.ACTION.UPDATE;
-                        }
-                    });
+        log.trace("selectAction: object={}", objectId);
+        if (getIdentifiers().contains(objectId)) {
+            ret[0] = AuthorizationImportBase.ACTION.SKIP;
         }
         return ret[0];
     }
 
     @Override
     public boolean performAdd(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
+        String body = String.format("{\"%s\":\"%s\"}",
+                ObjectImportBean.COLUMNS[0], items.get(0));
         return performAdd(getURI(), body);
     }
 
     @Override
     public boolean performUpdate(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
-        return performUpdate(getURI(), body);
+        log.debug("{}.performUpdate({})", getClass().getSimpleName(), String.join(",", items));
+        log.error("Objects are not updatable");
+        return false;
     }
 
     @Override
@@ -89,9 +80,9 @@ public class SubjectProcessor extends AuthorizationProcessorBase {
         if (!StringUtils.isEmpty(json)) {
             JsonContext jsonContext = new JsonContext();
             documentContext = jsonContext.parse(json);
-            identifiers = documentContext.read("$[*]['identifier']");
+            objects = documentContext.read("$[*]");
         } else {
-            log.error("All Subjects JSON is empty");
+            log.error("All Objects JSON is empty");
         }
     }
 
@@ -102,8 +93,8 @@ public class SubjectProcessor extends AuthorizationProcessorBase {
     }
 
     private JSONArray getIdentifiers() {
-        if (identifiers == null)
+        if (objects == null)
             setup();
-        return identifiers;
+        return objects;
     }
 }
