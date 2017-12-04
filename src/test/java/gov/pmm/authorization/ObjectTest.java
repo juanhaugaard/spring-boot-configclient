@@ -36,7 +36,7 @@ public class ObjectTest {
     public static void setup() throws IOException {
         Logging.setLogLevel("com.jayway.jsonpath", WARN);
         JsonContext jsonContext = new JsonContext();
-        documentContext = jsonContext.parse(new File("data2/Objects-Test.json"));
+        documentContext = jsonContext.parse(new File("data2/Objects-test.json"));
         objects = documentContext.read("$[*]");
     }
 

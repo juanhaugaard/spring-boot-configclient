@@ -36,7 +36,7 @@ public class ActionTest {
     public static void setup() throws IOException {
         Logging.setLogLevel("com.jayway.jsonpath", WARN);
         JsonContext jsonContext = new JsonContext();
-        documentContext = jsonContext.parse(new File("data2/Actions-Test.json"));
+        documentContext = jsonContext.parse(new File("data2/Actions-test.json"));
         actions = documentContext.read("$[*]");
     }
 
