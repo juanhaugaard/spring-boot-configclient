@@ -1,16 +1,18 @@
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
 package gov.pmm.authorization;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
-import gov.pmm.authorization.ActionImportBean;
-import gov.pmm.authorization.ActionProcessor;
-import gov.pmm.authorization.AuthorizationImportBase;
 import gov.pmm.common.util.Logging;
 import gov.pmm.common.util.csv.CsvItemResult;
 import gov.pmm.common.util.csv.CsvResult;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -103,6 +105,7 @@ public class ActionTest {
     }
 
     @Test
+    @Ignore("Requires VPN to aws TEST")
     public void testLiveActionImporter() throws URISyntaxException {
         AuthorizationImportBase.AuthorizationProcessor processor;
         String host = "http://172.31.2.135:8080";
