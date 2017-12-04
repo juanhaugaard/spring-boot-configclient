@@ -24,6 +24,10 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
 
     public abstract String[] getColumns();
 
+    public AuthorizationProcessor getProcessor() {
+        return processor;
+    }
+
     protected CsvItemResult processOneRecord(final CsvRow record) {
         CsvItemResult itemResult = new CsvItemResult();
 
@@ -41,9 +45,9 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
             } else {
                 final List<String> entity = new ArrayList<>();
                 Arrays.stream(getColumns()).forEach(field -> entity.add(record.getValue(field).trim()));
-                switch (processor.selectAction(entity)) {
+                switch (getProcessor().selectAction(entity)) {
                     case ADD: // item not found, insert it
-                        if (processor.performAdd(entity)) {
+                        if (getProcessor().performAdd(entity)) {
                             description.append("Added");
                         } else {
                             description.append("Failed to add");
@@ -51,7 +55,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
                         }
                         break;
                     case UPDATE: // item found, update it
-                        if (processor.performUpdate(entity)) {
+                        if (getProcessor().performUpdate(entity)) {
                             description.append("Updated");
                         } else {
                             description.append("Failed to update");
@@ -59,7 +63,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
                         }
                         break;
                     case DELETE: // item found, delete it
-                        if (processor.performDelete(entity)) {
+                        if (getProcessor().performDelete(entity)) {
                             description.append("Deleted");
                         } else {
                             description.append("Failed to delete");
@@ -67,7 +71,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
                         }
                         break;
                     case SKIP: // item identical, skip it
-                        if (processor.performSkip(entity)) {
+                        if (getProcessor().performSkip(entity)) {
                             description.append("Skipped");
                         } else {
                             description.append("Failed to skip");
