@@ -18,6 +18,8 @@ public class RoleImportBean extends AuthorizationImportBase {
 
     public static final String[] COLUMNS = {"name", "privileges", "delegableprivileges"};
 
+    public static final String[] OPTIONAL_COLS = {COLUMNS[1], COLUMNS[2]};
+
     /**
      * RoleImportBean Constructor
      */
@@ -31,6 +33,10 @@ public class RoleImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 

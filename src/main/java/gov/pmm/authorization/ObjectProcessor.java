@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -39,10 +39,10 @@ public class ObjectProcessor extends AuthorizationProcessorBase {
     }
 
     @Override
-    public AuthorizationImportBase.ACTION selectAction(List<String> items) {
+    public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
         if ((items == null) || (items.size() != 1))
             throw new IllegalArgumentException("invalid items parameter");
-        final String objectId = items.get(0);
+        final String objectId = items.get(column(0));
         final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
         log.trace("selectAction: object={}", objectId);
         if (getIdentifiers().contains(objectId)) {
@@ -52,25 +52,23 @@ public class ObjectProcessor extends AuthorizationProcessorBase {
     }
 
     @Override
-    public boolean performAdd(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\"}",
-                ObjectImportBean.COLUMNS[0], items.get(0));
-        return performAdd(getURI(), body);
+    public boolean performAdd(Map<String, String> items) {
+        return performAdd(getURI(), toJson(items));
     }
 
     @Override
-    public boolean performUpdate(List<String> items) {
-        log.debug("{}.performUpdate({})", getClass().getSimpleName(), String.join(",", items));
+    public boolean performUpdate(Map<String, String> items) {
+        log.debug("{}.performUpdate({})", getClass().getSimpleName(), toJson(items));
         log.error("Objects are not updatable");
         return false;
     }
 
     @Override
-    public boolean performDelete(List<String> items) {
+    public boolean performDelete(Map<String, String> items) {
         StringBuilder url = new StringBuilder(getURI().getScheme());
         url.append("://").append(getURI().getHost());
         url.append(":").append(getURI().getPort()).append(getURI().getPath());
-        url.append("/").append(items.get(0));
+        url.append("/").append(items.get(column(0)));
         return performDelete(url.toString(), Optional.empty());
     }
 
@@ -96,5 +94,11 @@ public class ObjectProcessor extends AuthorizationProcessorBase {
         if (objects == null)
             setup();
         return objects;
+    }
+
+    private String column(int index) {
+        if (index < 0 || index >= ObjectImportBean.COLUMNS.length)
+            throw new IllegalArgumentException("column index out of range: " + index);
+        return ObjectImportBean.COLUMNS[index];
     }
 }

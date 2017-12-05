@@ -18,6 +18,8 @@ public class ObjectImportBean extends AuthorizationImportBase {
 
     public static final String[] COLUMNS = {"object"};
 
+    public static final String[] OPTIONAL_COLS = {};
+
     /**
      * ObjectImportBean Constructor
      */
@@ -31,6 +33,10 @@ public class ObjectImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 

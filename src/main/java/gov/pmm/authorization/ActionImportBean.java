@@ -18,6 +18,8 @@ public class ActionImportBean extends AuthorizationImportBase {
 
     public static final String[] COLUMNS = {"action"};
 
+    public static final String[] OPTIONAL_COLS = {};
+
     /**
      * ActionImportBean Constructor
      */
@@ -32,5 +34,8 @@ public class ActionImportBean extends AuthorizationImportBase {
     public String[] getColumns() {
         return COLUMNS;
     }
-}
 
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
+    }
+}

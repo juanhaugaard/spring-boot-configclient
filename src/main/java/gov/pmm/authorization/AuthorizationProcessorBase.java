@@ -8,6 +8,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -141,6 +144,13 @@ public abstract class AuthorizationProcessorBase implements AuthorizationImportB
     protected RestTemplate getRest() {
         return rest;
     }
+
+    public static String toJson(Map<String, String> items) {
+        final List<String> json = new ArrayList<>();
+        items.forEach((key, value) -> json.add(String.format("\"%s\":\"%s\"", key, value)));
+        return "{" + String.join(",", json) + "}";
+    }
+
 
     protected String getAll(final URI uri) {
         String ret = null;

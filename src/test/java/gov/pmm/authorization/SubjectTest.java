@@ -19,8 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -77,25 +76,25 @@ public class SubjectTest {
     @Test
     public void testSubjectImporter() {
         String[] expected = {
-                "Skipped -",
+                "Skipped, ",
                 "Failed on # 2",
-                "Added -",
-                "Added -",
-                "Added -",
+                "Added, ",
+                "Added, ",
+                "Added, ",
                 "Failed on # 6",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Updated -",
-                "Skipped -",
-                "Skipped -",
-                "Updated -"
+                "Added, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Updated, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Updated, "
         };
         CsvResult csvResult = null;
         SubjectImportBean importer = new SubjectImportBean(makeSubjectProcessor1());
@@ -139,7 +138,6 @@ public class SubjectTest {
             assertEquals("wrong error count", 3, csvResult.getErrorCount());
         } catch (IOException e) {
             log.error(e.getMessage());
-            csvResult = null;
         }
     }
 
@@ -150,9 +148,9 @@ public class SubjectTest {
         String host = "http://172.31.2.135:8080";
         String path = "/api/subjects";
         processor = new SubjectProcessor(host, path, token);
-        List<String> items = new ArrayList<>();
-        items.add("John Doe");
-        items.add("User");
+        Map<String, String> items = new HashMap<>();
+        items.put(SubjectImportBean.COLUMNS[0], "John Doe");
+        items.put(SubjectImportBean.COLUMNS[1], "User");
         assertFalse(processor.performDelete(items));
     }
 
@@ -160,8 +158,8 @@ public class SubjectTest {
         return new AuthorizationImportBase.AuthorizationProcessor() {
 
             @Override
-            public AuthorizationImportBase.ACTION selectAction(List<String> items) {
-                final String subjectId = items.get(0);
+            public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
+                final String subjectId = items.get(SubjectImportBean.COLUMNS[0]);
                 final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
                 if (identifiers.contains(subjectId)) {
                     String filter = String.format("$[?(@.identifier=='%s')]", subjectId);
@@ -170,9 +168,9 @@ public class SubjectTest {
                     assertTrue("JsonReadFilteredFor(" + subjectId + ") should be zero or one", result.size() < 2);
                     result.stream()
                             .map(o -> (Map<String, String>) o)
-                            .filter(item -> items.get(0).equals(item.get("identifier")))
+                            .filter(item -> items.get(SubjectImportBean.COLUMNS[0]).equals(item.get(SubjectImportBean.COLUMNS[0])))
                             .forEach(item -> {
-                                if (items.get(1).equals(item.get("type"))) {
+                                if (items.get(SubjectImportBean.COLUMNS[1]).equals(item.get(SubjectImportBean.COLUMNS[1]))) {
                                     ret[0] = AuthorizationImportBase.ACTION.SKIP;
                                 } else {
                                     ret[0] = AuthorizationImportBase.ACTION.UPDATE;
@@ -183,22 +181,22 @@ public class SubjectTest {
             }
 
             @Override
-            public boolean performAdd(List<String> items) {
+            public boolean performAdd(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performUpdate(List<String> items) {
+            public boolean performUpdate(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performDelete(List<String> items) {
+            public boolean performDelete(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performSkip(List<String> items) {
+            public boolean performSkip(Map<String, String> items) {
                 return true;
             }
         };

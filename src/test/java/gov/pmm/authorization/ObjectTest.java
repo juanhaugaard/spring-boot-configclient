@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -65,20 +65,20 @@ public class ObjectTest {
     @Test
     public void testObjectImporter() {
         String[] expected = {
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -"
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Added, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Added, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, "
         };
         CsvResult csvResult = null;
         ObjectImportBean importer = new ObjectImportBean(makeObjectProcessor1());
@@ -122,7 +122,6 @@ public class ObjectTest {
             assertEquals("wrong error count", 0, csvResult.getErrorCount());
         } catch (IOException e) {
             log.error(e.getMessage());
-            csvResult = null;
         }
     }
 
@@ -130,8 +129,8 @@ public class ObjectTest {
         return new AuthorizationImportBase.AuthorizationProcessor() {
 
             @Override
-            public AuthorizationImportBase.ACTION selectAction(List<String> items) {
-                final String objectId = items.get(0);
+            public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
+                final String objectId = items.get(ObjectImportBean.COLUMNS[0]);
                 final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
                 if (objects.contains(objectId)) {
                     ret[0] = AuthorizationImportBase.ACTION.SKIP;
@@ -140,22 +139,22 @@ public class ObjectTest {
             }
 
             @Override
-            public boolean performAdd(List<String> items) {
+            public boolean performAdd(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performUpdate(List<String> items) {
+            public boolean performUpdate(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performDelete(List<String> items) {
+            public boolean performDelete(Map<String, String> items) {
                 return true;
             }
 
             @Override
-            public boolean performSkip(List<String> items) {
+            public boolean performSkip(Map<String, String> items) {
                 return true;
             }
         };

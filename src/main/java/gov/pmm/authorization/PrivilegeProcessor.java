@@ -14,9 +14,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.util.comparator.NullSafeComparator;
 
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,65 +28,63 @@ public class PrivilegeProcessor extends AuthorizationProcessorBase {
 
     private DocumentContext documentContext;
     private JSONArray identifiers;
+    private Comparator<Object> comparator;
 
     @Autowired
     public PrivilegeProcessor(
             @Value("${authorization.host}") String host,
             @Value("${privileges.path:/api/privileges}") String path,
             @Value("${authorization.token}") String token) throws URISyntaxException {
-        super(host,path,token);
+        super(host, path, token);
+        comparator = NullSafeComparator.NULLS_HIGH;
         log.debug("Constructing {} with url={}{}", getClass().getSimpleName(), host, path);
     }
 
     @Override
-    public AuthorizationImportBase.ACTION selectAction(List<String> items) {
-        if ((items == null) || !((items.size() != 3)||(items.size() != 4)))
+    public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
+        if ((items == null) || !((items.size() != 3) || (items.size() != 4)))
             throw new IllegalArgumentException("invalid items parameters");
-        final String privilegeId = items.get(0);
-        final String actionId = items.get(1);
-        final String objectId = items.get(2);
-        final String systemId = (items.size()==4)?items.get(3):null;
+        final String privilegeId = items.get(column(0));
+        final String actionId = items.get(column(1));
+        final String objectId = items.get(column(2));
+        final String systemId = items.get(column(3));
         final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
         log.trace("selectAction: privilege={}, {}, {}, {}", privilegeId, actionId, objectId, systemId);
-//        if (getIdentifiers().contains(privilegeId)) {
-//            String filter = String.format("$[?(@.identifier=='%s')]", subjectId);
-//            JSONArray result = getDocumentContext().read(filter);
-//            result.stream()
-//                    .map(o -> (Map<String, String>) o)
-//                    .filter(map -> subjectId.equals(map.get("identifier")))
-//                    .forEach(map -> {
-//                        if (subjectType.equals(map.get("type"))) {
-//                            ret[0] = AuthorizationImportBase.ACTION.SKIP;
-//                        } else {
-//                            ret[0] = AuthorizationImportBase.ACTION.UPDATE;
-//                        }
-//                    });
-//        }
+        if (getIdentifiers().contains(privilegeId)) {
+            String filter = String.format("$[?(@.name=='%s')]", privilegeId);
+            JSONArray resultArray = getDocumentContext().read(filter);
+            if (resultArray != null && resultArray.size() == 1) {
+                Map<String, Object> result = (Map<String, Object>) resultArray.get(0);
+                log.info("Found result for '{}':{}", privilegeId, result);
+                if ((comparator.compare(actionId, result.get(column(1))) == 0)
+                        && (comparator.compare(objectId, result.get(column(2))) == 0)
+                        && (comparator.compare(systemId, result.get(column(3))) == 0)) {
+                    ret[0] = AuthorizationImportBase.ACTION.SKIP;
+                } else {
+                    items.put("id", result.get("id").toString());
+                    ret[0] = AuthorizationImportBase.ACTION.UPDATE;
+                }
+            }
+        }
         return ret[0];
     }
 
     @Override
-    public boolean performAdd(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
-        return performAdd(getURI(), body);
+    public boolean performAdd(Map<String, String> items) {
+        return performAdd(getURI(), toJson(items));
     }
 
     @Override
-    public boolean performUpdate(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
-        return performUpdate(getURI(), body);
+    public boolean performUpdate(Map<String, String> items) {
+        return performUpdate(getURI(), toJson(items));
     }
 
     @Override
-    public boolean performDelete(List<String> items) {
+    public boolean performDelete(Map<String, String> items) {
         StringBuilder url = new StringBuilder(getURI().getScheme());
         url.append("://").append(getURI().getHost());
         url.append(":").append(getURI().getPort()).append(getURI().getPath());
-        url.append("/").append(items.get(0));
+        url.append("/").append(items.get(column(0)));
         return performDelete(url.toString(), Optional.empty());
     }
 
@@ -111,5 +110,11 @@ public class PrivilegeProcessor extends AuthorizationProcessorBase {
         if (identifiers == null)
             setup();
         return identifiers;
+    }
+
+    private String column(int index) {
+        if (index < 0 || index >= PrivilegeImportBean.COLUMNS.length)
+            throw new IllegalArgumentException("column index out of range: " + index);
+        return PrivilegeImportBean.COLUMNS[index];
     }
 }

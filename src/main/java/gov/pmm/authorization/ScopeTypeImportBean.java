@@ -18,6 +18,8 @@ public class ScopeTypeImportBean extends AuthorizationImportBase {
 
     public static final String[] COLUMNS = {"scopetype", "parent"};
 
+    public static final String[] OPTIONAL_COLS = {COLUMNS[1]};
+
     /**
      * ScopeTypeImportBean Constructor
      */
@@ -31,6 +33,10 @@ public class ScopeTypeImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 

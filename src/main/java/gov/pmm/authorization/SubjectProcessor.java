@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,16 +28,16 @@ public class SubjectProcessor extends AuthorizationProcessorBase {
             @Value("${authorization.host}") String host,
             @Value("${subjects.path:/api/subjects}") String path,
             @Value("${authorization.token}") String token) throws URISyntaxException {
-        super(host,path,token);
+        super(host, path, token);
         log.debug("Constructing {} with url={}{}", getClass().getSimpleName(), host, path);
     }
 
     @Override
-    public AuthorizationImportBase.ACTION selectAction(List<String> items) {
+    public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
         if ((items == null) || (items.size() != 2))
             throw new IllegalArgumentException("invalid items parameter");
-        final String subjectId = items.get(0);
-        final String subjectType = items.get(1);
+        final String subjectId = items.get(column(0));
+        final String subjectType = items.get(column(1));
         final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
         log.trace("selectAction: subject={}, {}", subjectId, subjectType);
         if (getIdentifiers().contains(subjectId)) {
@@ -59,27 +58,21 @@ public class SubjectProcessor extends AuthorizationProcessorBase {
     }
 
     @Override
-    public boolean performAdd(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
-        return performAdd(getURI(), body);
+    public boolean performAdd(Map<String, String> items) {
+        return performAdd(getURI(), toJson(items));
     }
 
     @Override
-    public boolean performUpdate(List<String> items) {
-        String body = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
-                SubjectImportBean.COLUMNS[0], items.get(0),
-                SubjectImportBean.COLUMNS[1], items.get(1));
-        return performUpdate(getURI(), body);
+    public boolean performUpdate(Map<String, String> items) {
+        return performUpdate(getURI(), toJson(items));
     }
 
     @Override
-    public boolean performDelete(List<String> items) {
+    public boolean performDelete(Map<String, String> items) {
         StringBuilder url = new StringBuilder(getURI().getScheme());
         url.append("://").append(getURI().getHost());
         url.append(":").append(getURI().getPort()).append(getURI().getPath());
-        url.append("/").append(items.get(0));
+        url.append("/").append(items.get(column(0)));
         return performDelete(url.toString(), Optional.empty());
     }
 
@@ -105,5 +98,11 @@ public class SubjectProcessor extends AuthorizationProcessorBase {
         if (identifiers == null)
             setup();
         return identifiers;
+    }
+
+    private String column(int index) {
+        if (index < 0 || index >= SubjectImportBean.COLUMNS.length)
+            throw new IllegalArgumentException("column index out of range: " + index);
+        return SubjectImportBean.COLUMNS[index];
     }
 }

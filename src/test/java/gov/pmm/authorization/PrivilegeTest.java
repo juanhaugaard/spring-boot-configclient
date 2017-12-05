@@ -13,18 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.event.Level;
+import org.springframework.util.comparator.NullSafeComparator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.slf4j.event.Level.INFO;
+import static org.junit.Assert.*;
 import static org.slf4j.event.Level.TRACE;
 import static org.slf4j.event.Level.WARN;
 
@@ -69,19 +67,37 @@ public class PrivilegeTest {
     @Test
     public void testPrivilegeImporter() {
         String[] expected = {
-                "Skipped -",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Added -",
-                "Skipped -",
-                "Skipped -",
-                "Skipped -"
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Added, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Skipped, ",
+                "Updated, ",
+                "Updated, ",
+                "Skipped, ",
+                "Skipped, "
         };
         CsvResult csvResult = null;
         PrivilegeImportBean importer = new PrivilegeImportBean(makePrivilegeProcessor1());
@@ -94,7 +110,7 @@ public class PrivilegeTest {
         assertNotNull("csvResult should not be null", csvResult);
         log.info("Result total:{} errors:{}", csvResult.getTotalCount(), csvResult.getErrorCount());
         csvResult.getItems().stream().forEach(it -> log.info("{} {}", it.getStatus(), it.getDescription()));
-        assertEquals("wrong total count", 30, csvResult.getTotalCount());
+        assertEquals("wrong total count", 31, csvResult.getTotalCount());
         assertEquals("wrong error count", 0, csvResult.getErrorCount());
         int i = 0;
         for (CsvItemResult item : csvResult.getItems()) {
@@ -108,54 +124,61 @@ public class PrivilegeTest {
         }
     }
 
+    private JSONArray getIdentifiers() {
+        return privileges;
+    }
+
+    private DocumentContext getDocumentContext() {
+        return documentContext;
+    }
+
     private AuthorizationImportBase.AuthorizationProcessor makePrivilegeProcessor1() {
         return new AuthorizationImportBase.AuthorizationProcessor() {
+            Comparator<Object> comparator = NullSafeComparator.NULLS_HIGH;
 
             @Override
-            public AuthorizationImportBase.ACTION selectAction(List<String> items) {
-                if ((items == null) || !((items.size() != 3)||(items.size() != 4)))
+            public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
+                if ((items == null) || !((items.size() != 3) || (items.size() != 4)))
                     throw new IllegalArgumentException("invalid items parameters");
-                final String privilegeId = items.get(0);
-                final String actionId = items.get(1);
-                final String objectId = items.get(2);
-                final String systemId = (items.size()==4)?items.get(3):null;
+                final String privilegeId = items.get(column(0));
+                final String actionId = items.get(column(1));
+                final String objectId = items.get(column(2));
+                final String systemId = items.get(column(3));
                 final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
                 log.trace("selectAction: privilege={}, {}, {}, {}", privilegeId, actionId, objectId, systemId);
-        //        if (getIdentifiers().contains(privilegeId)) {
-        //            String filter = String.format("$[?(@.identifier=='%s')]", subjectId);
-        //            JSONArray result = getDocumentContext().read(filter);
-        //            result.stream()
-        //                    .map(o -> (Map<String, String>) o)
-        //                    .filter(map -> subjectId.equals(map.get("identifier")))
-        //                    .forEach(map -> {
-        //                        if (subjectType.equals(map.get("type"))) {
-        //                            ret[0] = AuthorizationImportBase.ACTION.SKIP;
-        //                        } else {
-        //                            ret[0] = AuthorizationImportBase.ACTION.UPDATE;
-        //                        }
-        //                    });
-        //        }
+                if (getIdentifiers().contains(privilegeId)) {
+                    String filter = String.format("$[?(@.name=='%s')]", privilegeId);
+                    JSONArray resultArray = getDocumentContext().read(filter);
+                    if (resultArray != null && resultArray.size() == 1) {
+                        Map<String, Object> result = (Map<String, Object>) resultArray.get(0);
+                        log.info("Found result for '{}':{}", privilegeId, result);
+                        if ((comparator.compare(actionId, result.get(column(1))) == 0)
+                                && (comparator.compare(objectId, result.get(column(2))) == 0)
+                                && (comparator.compare(systemId, result.get(column(3))) == 0)) {
+                            ret[0] = AuthorizationImportBase.ACTION.SKIP;
+                        } else {
+                            items.put("id", result.get("id").toString());
+                            ret[0] = AuthorizationImportBase.ACTION.UPDATE;
+                        }
+                    }
+                }
                 return ret[0];
             }
 
-            @Override
-            public boolean performAdd(List<String> items) {
+            public boolean performAdd(final Map<String, String> items) {
+                // do nothing
                 return true;
             }
 
-            @Override
-            public boolean performUpdate(List<String> items) {
+            public boolean performUpdate(final Map<String, String> items) {
+                // do nothing
                 return true;
             }
 
-            @Override
-            public boolean performDelete(List<String> items) {
-                return true;
-            }
-
-            @Override
-            public boolean performSkip(List<String> items) {
-                return true;
+            private String column(int index) {
+                if (index < 0 || index >= PrivilegeImportBean.COLUMNS.length)
+                    throw new IllegalArgumentException("column index out of range: " + index);
+                return PrivilegeImportBean.COLUMNS[index];
             }
         };
 

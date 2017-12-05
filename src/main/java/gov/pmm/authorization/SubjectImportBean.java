@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class SubjectImportBean extends AuthorizationImportBase {
 
     public static final String[] COLUMNS = {"identifier", "type"};
+    public static final String[] OPTIONAL_COLS = {};
 
     /**
      * SubjectImportBean Constructor
@@ -35,6 +36,10 @@ public class SubjectImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 

@@ -21,6 +21,8 @@ public class LocalAssignmentImportBean extends AuthorizationImportBase {
             "scopes", "scopegroups", "effdate", "expdate"
     };
 
+    public static final String[] OPTIONAL_COLS = {COLUMNS[1], COLUMNS[2], COLUMNS[3], COLUMNS[4], COLUMNS[5], COLUMNS[6]};
+
     /**
      * AssignmentImportBean Constructor
      */
@@ -34,6 +36,10 @@ public class LocalAssignmentImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 

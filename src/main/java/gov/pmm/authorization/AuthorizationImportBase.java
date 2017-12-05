@@ -1,13 +1,15 @@
 package gov.pmm.authorization;
 
+import gov.pmm.common.util.Pair;
 import gov.pmm.common.util.csv.CsvImportBean;
 import gov.pmm.common.util.csv.CsvItemResult;
 import gov.pmm.common.util.csv.CsvRow;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class imports Subjects from a CSV file  * <p>
@@ -24,8 +26,34 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
 
     public abstract String[] getColumns();
 
+    public abstract String[] getOptionalColumns();
+
     public AuthorizationProcessor getProcessor() {
         return processor;
+    }
+
+    protected List<String> optionalColumns() {
+        return Arrays.asList(getOptionalColumns());
+    }
+
+    protected boolean validateOneRecord(final CsvRow record, final CsvItemResult itemResult) {
+        boolean ret = true;
+        final StringBuilder description = new StringBuilder();
+        long missingCnt = Arrays.stream(getColumns())
+                .filter(column -> !optionalColumns().contains(column))
+                .filter(column -> !record.valueExists(column))
+                .count();
+        if (missingCnt > 0) {
+            description.append("Failed on # ").append(record.rowNumber());
+            Arrays.stream(getColumns())
+                    .filter(column -> !optionalColumns().contains(column))
+                    .filter(column -> !record.valueExists(column))
+                    .forEach(column -> description.append(", missing ").append(column));
+            itemResult.setStatus(CsvItemResult.STATUS.CLIENT_ERROR);
+            itemResult.setDescription(description.toString());
+            ret = false;
+        }
+        return ret;
     }
 
     protected CsvItemResult processOneRecord(final CsvRow record) {
@@ -33,18 +61,13 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
 
         // here we process one CSV record to produce one Authorization entity
         try {
-            final StringBuilder description = new StringBuilder();
-            long missingCnt = Arrays.stream(getColumns()).filter(column -> !record.valueExists(column)).count();
-            if (missingCnt > 0) {
-                description.append("Failed on # ").append(record.rowNumber());
+            if (validateOneRecord(record, itemResult)) {
+                final StringBuilder description = new StringBuilder();
+                final Map<String, String> entity = new HashMap<>();
                 Arrays.stream(getColumns())
-                        .filter(column -> !record.valueExists(column))
-                        .forEach(field -> description.append(", missing ").append(field));
-                itemResult.setStatus(CsvItemResult.STATUS.CLIENT_ERROR);
-                itemResult.setDescription(description.toString());
-            } else {
-                final List<String> entity = new ArrayList<>();
-                Arrays.stream(getColumns()).forEach(field -> entity.add(record.getValue(field).trim()));
+                        .filter(column -> record.valueExists(column))
+                        .map(column -> Pair.of(column, record.getValue(column).trim()))
+                        .forEach(pair -> entity.put(pair.getFirst(), pair.getSecond()));
                 switch (getProcessor().selectAction(entity)) {
                     case ADD: // item not found, insert it
                         if (getProcessor().performAdd(entity)) {
@@ -79,7 +102,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
                         }
                         break;
                 }
-                entity.stream().forEach(item -> description.append(" - ").append(item));
+                entity.forEach((key, value) -> description.append(", ").append(key).append("=").append(value));
                 itemResult.setDescription(description.toString());
             }
             itemResult.setCsvRecord(String.join(",", record.currentValues()));
@@ -95,26 +118,26 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
     public enum ACTION {ADD, UPDATE, DELETE, SKIP}
 
     public interface AuthorizationProcessor {
-        ACTION selectAction(final List<String> items);
+        ACTION selectAction(final Map<String, String> items);
 
-        default boolean performAdd(final List<String> items) {
+        default boolean performAdd(final Map<String, String> items) {
             // do nothing
             return false;
         }
 
-        default boolean performUpdate(final List<String> items) {
+        default boolean performUpdate(final Map<String, String> items) {
             // do nothing
             return false;
         }
 
-        default boolean performDelete(final List<String> items) {
+        default boolean performDelete(final Map<String, String> items) {
             // do nothing
             return false;
         }
 
-        default boolean performSkip(final List<String> items) {
+        default boolean performSkip(final Map<String, String> items) {
             // do nothing
-            log.trace("{}.performSkip({})", getClass().getSimpleName(), String.join(",", items));
+            log.trace("{}.performSkip({})", getClass().getSimpleName(), String.join(",", items.values()));
             return true;
         }
     }

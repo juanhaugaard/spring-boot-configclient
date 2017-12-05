@@ -22,6 +22,8 @@ public class DelegationImportBean extends AuthorizationImportBase {
             "effdate", "expdate"
     };
 
+    public static final String[] OPTIONAL_COLS = {COLUMNS[2], COLUMNS[3], COLUMNS[4], COLUMNS[5]};
+
     /**
      * DelegationImportBean Constructor
      */
@@ -35,6 +37,10 @@ public class DelegationImportBean extends AuthorizationImportBase {
 
     public String[] getColumns() {
         return COLUMNS;
+    }
+
+    public String[] getOptionalColumns() {
+        return OPTIONAL_COLS;
     }
 }
 
