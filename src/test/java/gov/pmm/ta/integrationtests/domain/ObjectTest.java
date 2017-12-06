@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
@@ -22,7 +22,9 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.slf4j.event.Level.WARN;
 
 @Slf4j
@@ -34,7 +36,7 @@ public class ObjectTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        Logging.setLogLevel("com.jayway.jsonpath", WARN);
+        Logging.setLogLevel(com.jayway.jsonpath.DocumentContext.class.getPackage().getName(), WARN);
         JsonContext jsonContext = new JsonContext();
         documentContext = jsonContext.parse(new File("data2/Objects-test.json"));
         objects = documentContext.read("$[*]");

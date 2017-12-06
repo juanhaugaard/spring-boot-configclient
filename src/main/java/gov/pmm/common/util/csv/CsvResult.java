@@ -46,7 +46,7 @@ public class CsvResult {
     public void setItems(Collection<CsvItemResult> items) {
         init();
         this.items.addAll(items);
-        errorCount = (int) this.items.stream().filter(item -> item.isError()).count();
+        errorCount = (int) this.items.stream().filter(CsvItemResult::isError).count();
     }
 
     @Override

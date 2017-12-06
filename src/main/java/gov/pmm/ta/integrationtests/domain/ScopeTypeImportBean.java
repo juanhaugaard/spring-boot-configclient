@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,23 +11,20 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-/**
- * This class imports Subjects from a CSV file  * <p>
- * Created by juan.haugaard on 11/30/2017.
- */
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SubjectImportBean extends AuthorizationImportBase {
+public class ObjectImportBean extends AuthorizationImportBase {
 
-    public static final String[] COLUMNS = {"identifier", "type"};
+    public static final String[] COLUMNS = {"object"};
+
     public static final String[] OPTIONAL_COLS = {};
 
     /**
-     * SubjectImportBean Constructor
+     * ObjectImportBean Constructor
      */
     @Autowired
-    public SubjectImportBean(@Qualifier("subjectProcessor") AuthorizationProcessor processor) {
+    public ObjectImportBean(@Qualifier("objectProcessor") AuthorizationProcessor processor) {
         super(processor);
         log.debug("{} constructed with {}",
                 getClass().getSimpleName(),

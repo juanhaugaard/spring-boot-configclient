@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import org.springframework.util.StringUtils;
 
@@ -33,10 +33,10 @@ public class FileOrder {
         if ((o1 == null) && (o2 == null)) {
             return 0;
         }
-        if ((o1 == null) && (o2 != null)) {
+        if (o1 == null) {
             return -1;
         }
-        if ((o1 != null) && (o2 == null)) {
+        if (o2 == null) {
             return 1;
         }
         return apply(o1) - apply(o2);

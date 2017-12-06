@@ -41,9 +41,11 @@ public abstract class CsvImportBean {
                 if (listener != null)
                     listener.onNext(itemResult);
             }
-            listener.onCompleted();
+            if (listener != null)
+                listener.onCompleted();
         } catch (Exception e) {
-            listener.onError(e);
+            if (listener != null)
+                listener.onError(e);
         }
     }
 

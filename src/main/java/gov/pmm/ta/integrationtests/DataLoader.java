@@ -1,48 +1,57 @@
-package gov.pmm;
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
 
-import gov.pmm.authorization.*;
+package gov.pmm.ta.integrationtests;
+
 import gov.pmm.common.util.csv.CsvImportBean;
 import gov.pmm.common.util.csv.CsvItemResult;
 import gov.pmm.common.util.csv.CsvResult;
+import gov.pmm.ta.integrationtests.domain.ActionImportBean;
+import gov.pmm.ta.integrationtests.domain.DelegationImportBean;
+import gov.pmm.ta.integrationtests.domain.FileOrder;
+import gov.pmm.ta.integrationtests.domain.LocalAssignmentImportBean;
+import gov.pmm.ta.integrationtests.domain.ObjectImportBean;
+import gov.pmm.ta.integrationtests.domain.PrivilegeImportBean;
+import gov.pmm.ta.integrationtests.domain.RoleImportBean;
+import gov.pmm.ta.integrationtests.domain.ScopeGroupImportBean;
+import gov.pmm.ta.integrationtests.domain.ScopeImportBean;
+import gov.pmm.ta.integrationtests.domain.ScopeTypeImportBean;
+import gov.pmm.ta.integrationtests.domain.SubjectImportBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Order(1)
 @Component
 public class DataLoader implements ApplicationRunner {
-
     public static final String PARAM = "csv-dir";
-
     private ApplicationContext context;
 
     @Autowired
-    public DataLoader(final ApplicationContext context) {
+    public DataLoader(ApplicationContext context) {
         this.context = context;
     }
 
-    /**
-     * Callback used to run the bean.
-     *
-     * @param args incoming application arguments
-     * @throws Exception on error
-     */
-    @Override
-    public void run(final ApplicationArguments args) {
+    public void run(ApplicationArguments args) {
         if (!args.containsOption(PARAM)) {
+            log.info("Skiping DataLoader, argument '{}' not found", PARAM);
             return;
         }
+        log.info("DataLoader started with option names : {}", args.getOptionNames());
+        log.info("DataLoader started with command-line arguments: {}", Arrays.toString(args.getSourceArgs()));
+        log.info("NonOptionArgs: {}", args.getNonOptionArgs());
+        log.info("OptionNames: {}", args.getOptionNames());
 
         for (String optionValue : args.getOptionValues(PARAM)) {
             String[] csvDirs = optionValue.split(",");
@@ -80,24 +89,27 @@ public class DataLoader implements ApplicationRunner {
 
     private void processCsvFile(final File csvFile) {
         CsvImportBean bean = null;
+        String[] names = (String[]) FileOrder.FILE_ORDER.toArray();
         String name = csvFile.getName();
-        if (name.toLowerCase().startsWith("subjects")) {
+        if (name.toLowerCase().startsWith(names[0])) {
             bean = context.getBean(SubjectImportBean.class);
-        } else if (name.toLowerCase().startsWith("objects")) {
+        } else if (name.toLowerCase().startsWith(names[1])) {
             bean = context.getBean(ObjectImportBean.class);
-        } else if (name.toLowerCase().startsWith("actions")) {
+        } else if (name.toLowerCase().startsWith(names[2])) {
             bean = context.getBean(ActionImportBean.class);
-        } else if (name.toLowerCase().startsWith("scopetypes")) {
+        } else if (name.toLowerCase().startsWith(names[3])) {
             bean = context.getBean(ScopeTypeImportBean.class);
-        } else if (name.toLowerCase().startsWith("scopegroups")) {
+        } else if (name.toLowerCase().startsWith(names[4])) {
+            bean = context.getBean(ScopeImportBean.class);
+        } else if (name.toLowerCase().startsWith(names[5])) {
             bean = context.getBean(ScopeGroupImportBean.class);
-        } else if (name.toLowerCase().startsWith("privileges")) {
+        } else if (name.toLowerCase().startsWith(names[6])) {
             bean = context.getBean(PrivilegeImportBean.class);
-        } else if (name.toLowerCase().startsWith("roles")) {
+        } else if (name.toLowerCase().startsWith(names[7])) {
             bean = context.getBean(RoleImportBean.class);
-        } else if (name.toLowerCase().startsWith("assignments")) {
+        } else if (name.toLowerCase().startsWith(names[8])) {
             bean = context.getBean(LocalAssignmentImportBean.class);
-        } else if (name.toLowerCase().startsWith("delegations")) {
+        } else if (name.toLowerCase().startsWith(names[9])) {
             bean = context.getBean(DelegationImportBean.class);
         }
         if (bean != null) {
@@ -113,3 +125,6 @@ public class DataLoader implements ApplicationRunner {
         }
     }
 }
+
+
+

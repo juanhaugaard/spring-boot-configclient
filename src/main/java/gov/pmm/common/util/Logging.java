@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
 package gov.pmm.common.util;
 
 

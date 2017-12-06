@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package com.example;
+package gov.pmm.ta.integrationtests;
 
 import com.example.bookmarks.Account;
 import com.example.bookmarks.AccountRepository;

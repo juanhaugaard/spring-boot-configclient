@@ -12,7 +12,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by juan.haugaard on 1/23/2017.
@@ -143,7 +148,7 @@ public class CsvParser implements Iterable<CsvRow> {
                     // end of file reached
                     eof = true;
                     log.trace("{}.nextRecord EOF", this.getClass().getSimpleName());
-                    return Collections.EMPTY_LIST;
+                    return (List<CsvField>)Collections.EMPTY_LIST;
                 } else if (!isBlankRecord(items)) {
                     // valid record, create fields
                     values = new CsvField[Math.min(items.size(), names.length)];
@@ -160,7 +165,7 @@ public class CsvParser implements Iterable<CsvRow> {
         } catch (IOException e) {
             log.trace("{}.nextRecord EOF, {}", this.getClass().getSimpleName(), e.getMessage());
             eof = true;
-            return Collections.EMPTY_LIST;
+            return (List<CsvField>)Collections.EMPTY_LIST;
         }
     }
 
@@ -242,7 +247,7 @@ public class CsvParser implements Iterable<CsvRow> {
     }
 
     private class CsvRowIterator implements Iterator<CsvRow> {
-        private CsvParser parser;
+        private final CsvParser parser;
         private Boolean hasNext;
 
         CsvRowIterator(CsvParser parser) {

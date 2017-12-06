@@ -1,32 +1,32 @@
-name, object, action, system
-Manage Action, Action, Manage
-Manage Object, Object, Manage
-Manage Subject, Subject, Manage
+name                  ,object         ,action ,system
+Manage Action         ,Action         ,Manage
+Manage Object         ,Object         ,Manage
+Manage Subject        ,Subject        ,Manage
 Manage Subject PMM    ,Subject        ,Manage ,PMM
-Manage Privilege, Privilege, Manage
-Manage Role, Role, Manage
-privilegewo system, Award, Edit
-Manage Scope, Scope, Manage
-Manage Scope Type, Scope Type, Manage
-Manage Scope Group, Scope Group, Manage
-Manage Assignment, Assignment, Manage
-Revise Announcement, Announcement, Revise
-Revise Award, Award, Revise
-Edit Announcement, Announcement, Edit
-Edit Award, Award, Edit
-View Announcement, Announcement, View
-View Award, Award, View
-Delete Announcement, Announcement, Delete
-Delete Award, Award, Delete
-Submit Announcement, Announcement, Submit
-Submit Award, Award, Submit
-Create Announcement, Announcement, Create
-Create Award, Award, Create
-Approve Announcement, Announcement, Approve
-Approve Award, Award, Approve
-Certify Announcement, Announcement, Certify
-Certify Award, Award, Certify
+Manage Privilege      ,Privilege      ,Manage
+Manage Role           ,Role           ,Manage
+privilegewo system    ,Award          ,Edit
+Manage Scope          ,Scope          ,Manage
+Manage Scope Type     ,Scope Type     ,Manage
+Manage Scope Group    ,Scope Group    ,Manage
+Manage Assignment     ,Assignment     ,Manage
+Revise Announcement   ,Announcement   ,Revise
+Revise Award          ,Award          ,Revise
+Edit Announcement     ,Announcement   ,Edit
+Edit Award            ,Award          ,Edit
+View Announcement     ,Announcement   ,View
+View Award            ,Award          ,View
+Delete Announcement   ,Announcement   ,Delete
+Delete Award          ,Award          ,Delete
+Submit Announcement   ,Announcement   ,Submit
+Submit Award          ,Award          ,Submit
+Create Announcement   ,Announcement   ,Create
+Create Award          ,Award          ,Create
+Approve Announcement  ,Announcement   ,Approve
+Approve Award         ,Award          ,Approve
+Certify Announcement  ,Announcement   ,Certify
+Certify Award         ,Award          ,Certify
 Manage Root Assignment,Root Assignment,Manage ,PMM
 Test Privilege        ,Announcement   ,Manage
-delegate privilege, Award, View, PMM
-Privilege with system, Award, Edit, PMM
+delegate privilege    ,Award          ,View   ,PMM
+Privilege with system ,Award          ,Edit   ,PMM

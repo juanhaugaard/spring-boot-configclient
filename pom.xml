@@ -37,7 +37,6 @@
         <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
     </properties>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +14,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ScopeGroupImportBean extends AuthorizationImportBase {
+public class PrivilegeImportBean extends AuthorizationImportBase {
 
-    public static final String[] COLUMNS = {"name", "scopes"};
+    public static final String[] COLUMNS = {"name", "action", "object", "system"};
 
-    public static final String[] OPTIONAL_COLS = {};
+    public static final String[] OPTIONAL_COLS = {COLUMNS[3]};
 
     /**
-     * ScopeGroupImportBean Constructor
+     * PrivilegeImportBean Constructor
      */
     @Autowired
-    public ScopeGroupImportBean(@Qualifier("scopeGroupProcessor") AuthorizationProcessor processor) {
+    public PrivilegeImportBean(@Qualifier("privilegeProcessor") AuthorizationProcessor processor) {
         super(processor);
         log.debug("{} constructed with {}",
                 getClass().getSimpleName(),
@@ -38,5 +38,6 @@ public class ScopeGroupImportBean extends AuthorizationImportBase {
     public String[] getOptionalColumns() {
         return OPTIONAL_COLS;
     }
+
 }
 

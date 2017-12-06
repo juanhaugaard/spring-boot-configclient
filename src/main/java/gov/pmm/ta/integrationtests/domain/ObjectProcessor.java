@@ -1,4 +1,8 @@
-package gov.pmm.authorization;
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
+package gov.pmm.ta.integrationtests.domain;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
@@ -9,9 +13,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
@@ -19,33 +21,27 @@ import java.util.Optional;
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ActionProcessor extends AuthorizationProcessorBase {
+public class ObjectProcessor extends AuthorizationProcessorBase {
 
-    private RestTemplate rest;
-    private URI uri;
-    private String token;
     private DocumentContext documentContext;
-    private JSONArray actions;
+    private JSONArray objects;
 
-    public ActionProcessor(
+    public ObjectProcessor(
             @Value("${authorization.host}") String host,
-            @Value("${actions.path:/api/actions}") String path,
+            @Value("${objects.path:/api/objects}") String path,
             @Value("${authorization.token}") String token) throws URISyntaxException {
         super(host, path, token);
         log.debug("Constructing {} with url={}{}", getClass().getSimpleName(), host, path);
-        this.rest = new RestTemplate();
-        this.token = token;
-        setURI(host + path);
     }
 
     @Override
     public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
         if ((items == null) || (items.size() != 1))
             throw new IllegalArgumentException("invalid items parameter");
-        final String actionId = items.get(column(0));
+        final String objectId = items.get(column(0));
         final AuthorizationImportBase.ACTION[] ret = {AuthorizationImportBase.ACTION.ADD};
-        log.trace("selectAction: action={}", actionId);
-        if (getIdentifiers().contains(actionId)) {
+        log.trace("selectAction: object={}", objectId);
+        if (getIdentifiers().contains(objectId)) {
             ret[0] = AuthorizationImportBase.ACTION.SKIP;
         }
         return ret[0];
@@ -59,7 +55,7 @@ public class ActionProcessor extends AuthorizationProcessorBase {
     @Override
     public boolean performUpdate(Map<String, String> items) {
         log.debug("{}.performUpdate({})", getClass().getSimpleName(), toJson(items));
-        log.error("Actions are not updatable");
+        log.error("Objects are not updatable");
         return false;
     }
 
@@ -78,7 +74,7 @@ public class ActionProcessor extends AuthorizationProcessorBase {
         if (!StringUtils.isEmpty(json)) {
             JsonContext jsonContext = new JsonContext();
             documentContext = jsonContext.parse(json);
-            actions = documentContext.read("$[*]");
+            objects = documentContext.read("$[*]");
         } else {
             log.error("All Objects JSON is empty");
         }
@@ -91,14 +87,14 @@ public class ActionProcessor extends AuthorizationProcessorBase {
     }
 
     private JSONArray getIdentifiers() {
-        if (actions == null)
+        if (objects == null)
             setup();
-        return actions;
+        return objects;
     }
 
     private String column(int index) {
-        if (index < 0 || index >= ActionImportBean.COLUMNS.length)
+        if (index < 0 || index >= ObjectImportBean.COLUMNS.length)
             throw new IllegalArgumentException("column index out of range: " + index);
-        return ActionImportBean.COLUMNS[index];
+        return ObjectImportBean.COLUMNS[index];
     }
 }

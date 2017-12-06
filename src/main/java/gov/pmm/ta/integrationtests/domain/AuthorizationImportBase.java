@@ -1,4 +1,8 @@
-package gov.pmm.authorization;
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
+package gov.pmm.ta.integrationtests.domain;
 
 import gov.pmm.common.util.Pair;
 import gov.pmm.common.util.csv.CsvImportBean;
@@ -65,7 +69,7 @@ public abstract class AuthorizationImportBase extends CsvImportBean {
                 final StringBuilder description = new StringBuilder();
                 final Map<String, String> entity = new HashMap<>();
                 Arrays.stream(getColumns())
-                        .filter(column -> record.valueExists(column))
+                        .filter(record::valueExists)
                         .map(column -> Pair.of(column, record.getValue(column).trim()))
                         .forEach(pair -> entity.put(pair.getFirst(), pair.getSecond()));
                 switch (getProcessor().selectAction(entity)) {

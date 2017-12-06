@@ -2,9 +2,8 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
-import gov.pmm.authorization.FileOrder;
 import org.junit.Test;
 
 import java.util.List;

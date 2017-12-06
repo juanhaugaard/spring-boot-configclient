@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
@@ -17,7 +17,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.comparator.NullSafeComparator;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,13 +38,26 @@ public class PrivilegeProcessor extends AuthorizationProcessorBase {
             @Value("${privileges.path:/api/privileges}") String path,
             @Value("${authorization.token}") String token) throws URISyntaxException {
         super(host, path, token);
-        comparator = NullSafeComparator.NULLS_HIGH;
+        comparator = (Comparator<Object>) NullSafeComparator.NULLS_HIGH;
         log.debug("Constructing {} with url={}{}", getClass().getSimpleName(), host, path);
+    }
+
+    public static String toJson(Map<String, String> items) {
+        final String idKey = "id";
+        if (items == null || items.size() == 0)
+            throw new IllegalArgumentException("there are no items to build a Privilege JSON");
+        String idValue = items.get(idKey);
+        if (StringUtils.isEmpty(idValue))
+            throw new IllegalArgumentException("Privilege '" + idKey + "' an not be null");
+        items.remove(idKey);
+        final List<String> json = new ArrayList<>();
+        items.forEach((key, value) -> json.add(String.format("\"%s\":\"%s\"", key, value)));
+        return "{\"" + idKey + "\":" + idValue + "," + String.join(",", json) + "}";
     }
 
     @Override
     public AuthorizationImportBase.ACTION selectAction(Map<String, String> items) {
-        if ((items == null) || !((items.size() != 3) || (items.size() != 4)))
+        if ((items == null) || ((items.size() != 3) && (items.size() != 4)))
             throw new IllegalArgumentException("invalid items parameters");
         final String privilegeId = items.get(column(0));
         final String actionId = items.get(column(1));
@@ -94,7 +109,7 @@ public class PrivilegeProcessor extends AuthorizationProcessorBase {
         if (!StringUtils.isEmpty(json)) {
             JsonContext jsonContext = new JsonContext();
             documentContext = jsonContext.parse(json);
-            identifiers = documentContext.read("$[*]['identifier']");
+            identifiers = documentContext.read("$[*]['name']");
         } else {
             log.error("All Subjects JSON is empty");
         }

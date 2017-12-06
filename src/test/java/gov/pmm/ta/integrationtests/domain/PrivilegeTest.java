@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
  */
 
-package gov.pmm.authorization;
+package gov.pmm.ta.integrationtests.domain;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
@@ -12,17 +12,21 @@ import gov.pmm.common.util.csv.CsvResult;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.comparator.NullSafeComparator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.slf4j.event.Level.TRACE;
 import static org.slf4j.event.Level.WARN;
 
@@ -35,8 +39,8 @@ public class PrivilegeTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        Logging.setLogLevel("com.jayway.jsonpath", WARN);
-        Logging.setLogLevel("gov.pmm.authorization.PrivilegeTest", TRACE);
+        Logging.setLogLevel(com.jayway.jsonpath.DocumentContext.class.getPackage().getName(), WARN);
+        Logging.setLogLevel(PrivilegeTest.class, TRACE);
         JsonContext jsonContext = new JsonContext();
         documentContext = jsonContext.parse(new File("data2/Privileges-test.json"));
         privileges = documentContext.read("$.*.name");
@@ -122,6 +126,27 @@ public class PrivilegeTest {
                             + item.getDescription().substring(0, expected[i].length()),
                     item.getDescription().startsWith(expected[i++]));
         }
+    }
+
+    @Test
+    @Ignore("Requires VPN to aws TEST")
+    public void testLivePrivilegeImporter() throws URISyntaxException {
+        String host = "http://172.31.2.135:8080";
+        String path = "/api/privileges";
+        CsvResult csvResult = null;
+        AuthorizationImportBase.AuthorizationProcessor processor =new PrivilegeProcessor(host, path, token);
+        PrivilegeImportBean importer = new PrivilegeImportBean(processor);
+        try (FileInputStream fis = new FileInputStream("data2/Privileges-test.csv")) {
+            csvResult = importer.readInputStream(fis);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            csvResult = null;
+        }
+        assertNotNull("csvResult should not be null", csvResult);
+        log.info("Result total:{} errors:{}", csvResult.getTotalCount(), csvResult.getErrorCount());
+        csvResult.getItems().stream().forEach(it -> log.info("{} {}", it.getStatus(), it.getDescription()));
+        assertEquals("wrong total count", 31, csvResult.getTotalCount());
+        assertEquals("wrong error count", 0, csvResult.getErrorCount());
     }
 
     private JSONArray getIdentifiers() {

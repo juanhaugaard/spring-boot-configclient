@@ -1,7 +1,16 @@
-package gov.pmm.authorization;
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
+package gov.pmm.ta.integrationtests.domain;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +33,12 @@ public abstract class AuthorizationProcessorBase implements AuthorizationImportB
         this.token = token;
         this.rest = new RestTemplate();
         setURI(host + path);
+    }
+
+    public static String toJson(Map<String, String> items) {
+        final List<String> json = new ArrayList<>();
+        items.forEach((key, value) -> json.add(String.format("\"%s\":\"%s\"", key, value)));
+        return "{" + String.join(",", json) + "}";
     }
 
     protected boolean performAdd(final URI uri, final String body) {
@@ -137,20 +152,28 @@ public abstract class AuthorizationProcessorBase implements AuthorizationImportB
         return uri;
     }
 
-    protected void setURI(String uri) throws URISyntaxException {
+    protected AuthorizationProcessorBase setURI(String uri) throws URISyntaxException {
         this.uri = new URI(uri);
+        return this;
+    }
+
+    protected String getToken() {
+        return token;
+    }
+
+    protected AuthorizationProcessorBase setToken(String token) {
+        this.token = token;
+        return this;
+    }
+
+    protected AuthorizationProcessorBase setRest(RestTemplate rest) {
+        this.rest = rest;
+        return this;
     }
 
     protected RestTemplate getRest() {
         return rest;
     }
-
-    public static String toJson(Map<String, String> items) {
-        final List<String> json = new ArrayList<>();
-        items.forEach((key, value) -> json.add(String.format("\"%s\":\"%s\"", key, value)));
-        return "{" + String.join(",", json) + "}";
-    }
-
 
     protected String getAll(final URI uri) {
         String ret = null;

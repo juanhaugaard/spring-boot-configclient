@@ -1,4 +1,8 @@
-package gov.pmm.authorization;
+/*
+ * Copyright (c) 2017. Dovel Technologies and Digital Infuzion.
+ */
+
+package gov.pmm.ta.integrationtests.domain;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.JsonContext;
